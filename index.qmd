@@ -8,3 +8,44 @@ author:
 description: "Building static and interactive dashboards"
 date: 2023-12-18
 ---
+
+# Background
+
+```{r}
+#| message: false
+#| warning: false
+library(tidyverse)
+library(tidytuesdayR)
+library(here)
+```
+
+# Part 1: Identify the data
+
+For this project, I will be using the Project FeederWatch data.
+
+```{r create data directory}
+# tests if a directory named "data" exists locally
+if (!dir.exists(here("data"))) {
+    dir.create(here("data"))
+}
+
+# Read in the data manually
+
+if (!file.exists(here("data", "feederwatch.RDS"))) {
+  feederwatch_data <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2023/2023-01-10/PFW_2021_public.csv')
+  
+  saveRDS(feederwatch_data, file=here("data", "feederwatch.RDS"))
+}
+
+if (!file.exists(here("data", "site_data.RDS"))) {
+  sitedata <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2023/2023-01-10/PFW_count_site_data_public_2021.csv')
+  
+  saveRDS(sitedata, file=here("data", "site_data.RDS"))
+}
+
+```
+
+```{r read in data from RDS files}
+feederwatch <- readRDS(here("data", "feederwatch.RDS"))
+site_data <- readRDS(here("data", "site_data.RDS"))
+```
