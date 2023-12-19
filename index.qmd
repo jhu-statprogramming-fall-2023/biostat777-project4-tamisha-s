@@ -49,3 +49,71 @@ if (!file.exists(here("data", "site_data.RDS"))) {
 feederwatch <- readRDS(here("data", "feederwatch.RDS"))
 site_data <- readRDS(here("data", "site_data.RDS"))
 ```
+
+The following background about the dataset is obtained directly from the Tidy Tuesday GitHub page[^1]:
+
+[^1]: <https://github.com/rfordatascience/tidytuesday/blob/master/data/2023/2023-01-10/readme.md>
+
+The data this week comes from the [Project FeederWatch](https://feederwatch.org/explore/raw-dataset-requests/).
+
+> FeederWatch is a November-April survey of birds that visit backyards, nature centers, community areas, and other locales in North America. Citizen scientists could birds in areas with plantings, habitat, water, or food that attracts birds. The schedule is completely flexible. People count birds as long as they like on days of their choosing, then enter their counts online. This allows anyone to track what is happening to birds around your home and to contribute to a continental data-set of bird distribution and abundance.
+
+> FeederWatch data show which bird species visit feeders at thousands of locations across the continent every winter. The data also indicate how many individuals of each species are seen. This information can be used to measure changes in the winter ranges and abundances of bird species over time.
+
+A subset of the 2021 data is included for this TidyTuesday, but data available through 1988 is available for download on [FeederWatch Raw Dataset Downloads page](https://feederwatch.org/explore/raw-dataset-requests/)
+
+> Project FeederWatch is operated by the Cornell Lab of Ornithology and Birds Canada. Since 2016, Project FeederWatch has been sponsored by Wild Bird Unlimited.
+
+Here's a link to the data dictionary: [Data Dictionary](https://github.com/rfordatascience/tidytuesday/blob/master/data/2023/2023-01-10/readme.md)
+
+# Part 2: Design the interactive dashboard
+
+## Motivation and Overview
+
+::: callout-tip
+What are the goals and motivation of the data analysis?
+:::
+
+For this data analysis, I wanted to choose a dataset outside of what I would typically work with. I have never worked with bird data before, so I thought it would be interesting to explore distribution trends for birds, as well as changes in the numbers of the bird species overtime.
+
+Not academic but also, Hopkins students are called [Blue Jays]{style="color: blue"} and I wanted to look at data that included the Blue Jay bird.
+
+## Related Work
+
+::: callout-tip
+Anything that inspired you, such as a paper, a web site, or something we discussed in class.
+:::
+
+I was a little unsure about selecting the dataset, but I continued to read more on the Tidy Tuesday `README.md` for [Project FeederWatch](https://github.com/rfordatascience/tidytuesday/blob/master/data/2023/2023-01-10/readme.md) and there was a link to a website that described [how to use FeederWatch data in diverse ways](https://feederwatch.org/explore/ "See FeederWatch data in action!").
+
+Some of the examples they have on that website include:
+
+-   Trend graphs
+
+-   Participant maps for the various feeder sites
+
+-   Bird summaries by state/province
+
+## Data Analytic Questions
+
+::: callout-tip
+What question(s) are you trying to answer with the data and data analysis? Did the questions change as you began to explore the data? What new questions did you consider in the course of your analysis? What variables seemed important or not important?
+:::
+
+I ran into some issues using my selected package, `waffle`, for data analysis of the dataset. However, these were some things I wanted to explore:
+
+-   The distribution trends for the top 5 birds in the Northeast Region for the 2021-22 season, including the Blue Jay (Go Hop!)
+
+-   The characteristics of the sites that seemed to attract the most birds
+
+-   Feeders visited by the birds, and their average flock size while present at these locations
+
+## Audience
+
+## Data
+
+## Exploratory Data Analysis
+
+## Data Visualization
+
+## Narrative and Summary
