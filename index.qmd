@@ -1,0 +1,10 @@
+---
+title: "Project 4"
+author: 
+  - name: Tamisha Dzifa Segbefia
+    url: https://tamisha-s.quarto.pub/
+    affiliation: Department of Biomedical Engineering, Johns Hopkins
+    affiliation_url: https://bme.jhu.edu
+description: "Building static and interactive dashboards"
+date: 2023-12-18
+---
