@@ -50,6 +50,8 @@ feederwatch <- readRDS(here("data", "feederwatch.RDS"))
 site_data <- readRDS(here("data", "site_data.RDS"))
 ```
 
+## Data background
+
 The following background about the dataset is obtained directly from the Tidy Tuesday GitHub page[^1]:
 
 [^1]: <https://github.com/rfordatascience/tidytuesday/blob/master/data/2023/2023-01-10/readme.md>
@@ -104,16 +106,62 @@ I ran into some issues using my selected package, `waffle`, for data analysis of
 
 -   The distribution trends for the top 5 birds in the Northeast Region for the 2021-22 season, including the Blue Jay (Go Hop!)
 
+    -   Species code for #1, Carolina/Black-capped Chickadee: `bkcchi`
+
+    -   Species code for #2, Dark-eyed Junco: `daejun`
+
+    -   Species code for #3, Downy Woodpecker: `dowwoo`
+
+    -   Species code for #4, Northern Cardinal: `norcar`
+
+    -   Species code for #5, Blue Jay: `blujay`
+
 -   The characteristics of the sites that seemed to attract the most birds
 
 -   Feeders visited by the birds, and their average flock size while present at these locations
 
 ## Audience
 
+::: callout-tip
+Who is the target audience for your analysis? Should they be expected to have a specific background or knowledge?
+:::
+
+The target audience is anyone interested in birds and their migration trends/data.
+
+No specific background is needed but it would be nice to know what certain birds look like (which I can help by including images).
+
 ## Data
+
+::: callout-tip
+What are the original data sources? Is there a data dictionary or did you create a table yourself?
+:::
+
+Original data sources:
+
+-   The Cornell Lab of Ornithology and Birds Canada through [Project FeederWatch](https://feederwatch.org/explore/raw-dataset-requests/) (the data in this analysis contains a subset of the 2021 data but the full data from 1988 is available for download on their website)
+
+-   There was a data dictionary already that I linked to: [Data background]
 
 ## Exploratory Data Analysis
 
+::: callout-tip
+What visualizations did you use to look at your data in different ways? Did you consider statistical models (e.g. inference or prediction)? How did you decide? Were there any major changes to your ideas? How did you reach these conclusions?
+:::
+
+I looked at the total number of the top 5 birds from the northeast region present in the data.
+
 ## Data Visualization
+
+::: callout-tip
+What data analytic components (e.g. tables, plots, etc) would be useful to show in a static format versus an interactive format?
+:::
+
+Here are my ideas:
+
+-   Static format
+
+    -   Bar chart representing the total number of the top 5 present in the data
+
+-   Interactive format
 
 ## Narrative and Summary
