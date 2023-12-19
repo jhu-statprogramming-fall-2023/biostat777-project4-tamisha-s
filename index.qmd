@@ -162,6 +162,16 @@ Here are my ideas:
 
     -   Bar chart representing the total number of the top 5 present in the data
 
+    -   Line graph comparing the top 5 birds of all time vs the top 5 in the northeast region
+
 -   Interactive format
 
+    -   Might be interesting to see how the different characteristics of the sites impact how many of each bird are found at the sites
+
 ## Narrative and Summary
+
+::: callout-tip
+What did you learn from the data and data analysis? How did you answer the questions? How can you justify your answers? What are the key/important takeaways for the audience? What are the limitations of the analyses?
+:::
+
+I'm still working on the analysis but I think a major limitation is that this contains only a subset of 2021 data whereas the full data starts from 1988.
