@@ -3,7 +3,7 @@ title: "Census Data Dashboard"
 output: 
   flexdashboard::flex_dashboard:
     orientation: columns
-    vertical_layout: fill
+    vertical_layout: scroll
 runtime: shiny
 ---
 
@@ -109,6 +109,89 @@ if (!file.exists(here("data", "black_nd_20.RDS"))) {
 }
 ```
 
+```{r loading state county datasets, echo = FALSE}
+if (!file.exists(here("data", "ca_county_20.RDS"))) {
+  ca_county_data <- get_acs(
+  geography = "county",
+  variables = c(
+    total_households = "H1_001N",
+    vacant_households = "H1_003N",
+    median_household_income = "B19013_001",
+    black_pop = "B02001_003"
+  ),
+  summary_var = "B01003_001",
+  state = "CA",
+  year = 2020,
+  output = "wide"
+)
+  
+  saveRDS(ca_county_data, file=here("data", "ca_county.RDS"))
+}
+
+if (!file.exists(here("data", "fl_county_20.RDS"))) {
+  fl_county_data <- get_acs(
+  geography = "county",
+  variables = c(
+    total_households = "H1_001N",
+    vacant_households = "H1_003N",
+    median_household_income = "B19013_001",
+    black_pop = "B02001_003"
+  ),
+  summary_var = "B01003_001",
+  state = "FL",
+  year = 2020,
+  output = "wide"
+)
+  
+  saveRDS(fl_county_data, file=here("data", "fl_county.RDS"))
+}
+
+if (!file.exists(here("data", "pa_county_20.RDS"))) {
+  pa_county_data <- get_acs(
+  geography = "county",
+  variables = c(
+    total_households = "H1_001N",
+    vacant_households = "H1_003N",
+    median_household_income = "B19013_001",
+    black_pop = "B02001_003"
+  ),
+  summary_var = "B01003_001",
+  state = "PA",
+  year = 2020,
+  output = "wide"
+)
+  
+  saveRDS(pa_county_data, file=here("data", "pa_county.RDS"))
+}
+```
+
+```{r load Black population data, echo = FALSE}
+years <- lst(2016, 2017, 2018, 2019, 2020)
+my_vars <- c(
+   black_pop = "B02001_003"
+)
+
+# Learned a way to use map_dfr from this informative tutorial: https://mattherman.info/blog/tidycensus-mult-year/
+
+if (!file.exists(here("data", "black_pop_5_yr.RDS"))) {
+  black_pop_5yr <- map_dfr(
+    years,
+    ~ get_acs(
+      geography = "state",
+      variables = my_vars,
+      year = .x,
+      survey = "acs5",
+      geometry = FALSE
+    ),
+    .id = "year"
+  ) %>%
+    select(-moe) %>%
+    arrange(variable, NAME)
+  
+  saveRDS(black_pop_5yr, file=here("data", "black_pop_5_yr.RDS"))
+}
+```
+
 ```{r read in data from RDS files, echo = FALSE}
 black_10 <- as_tibble(readRDS(here("data", "black_pop_10.RDS")))
 black_20 <- as_tibble(readRDS(here("data", "black_pop_20.RDS")))
@@ -116,6 +199,11 @@ total_pop_10 <- as_tibble(readRDS(here("data", "total_pop_10.RDS")))
 total_pop_20 <- as_tibble(readRDS(here("data", "total_pop_20.RDS")))
 black_dc_20 <- as_tibble(readRDS(here("data", "black_dc_20.RDS")))
 black_nd_20 <- as_tibble(readRDS(here("data", "black_nd_20.RDS")))
+
+ca_county <- as_tibble(readRDS(here("data", "ca_county.RDS")))
+fl_county <- as_tibble(readRDS(here("data", "fl_county.RDS")))
+pa_county <- as_tibble(readRDS(here("data", "pa_county.RDS")))
+black_pop_5yr <- as_tibble(readRDS(here("data", "black_pop_5_yr.RDS")))
 ```
 
 # About
@@ -134,7 +222,10 @@ black_nd_20 <- as_tibble(readRDS(here("data", "black_nd_20.RDS")))
 
 # Interactive 2
 
+
 # Analysis
+
+## Row
 
 ### Plotting total population by state for 2010
 
@@ -187,8 +278,6 @@ p
 
 ### Visualizing Black population in DC
 
-DC is the state with the highest percentage Black population in 2020, so I'm interested to see how that plays out within the state.
-
 ```{r visualize Black populations in DC}
 dc_black_pop_20 <- st_sf(black_dc_20) %>%
   mutate(percent = 100 * (value / summary_value))
@@ -240,12 +329,7 @@ black_change %>%
     y = "State"
   )
 ```
-
-From this graph, we see that the state with the most Black population growth is North Dakota with an almost 250% increase, while Puerto Rico has actually had a negative decline in Black population.
-
 ### Visualizing Black population in ND
-
-DC is the state with the most Black population growth in 2020, so I'm interested to see how that plays out within the state.
 
 ```{r}
 nd_black_pop_20 <- st_sf(black_nd_20) %>%
@@ -293,5 +377,3 @@ black_dc_nd %>%
     y = "Percentage of population that is Black"
   )
 ```
-
-This last graph is just to satisfy my curiosity. It's interesting to see how the state that had the most Black population growth doesn't have 5% Black people even in 2020. And though DC's Black population actually decreased percentage-wise, they still have at least 4x more Black people.
