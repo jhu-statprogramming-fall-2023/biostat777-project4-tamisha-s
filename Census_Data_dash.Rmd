@@ -2,7 +2,7 @@
 title: "Census Data Dashboard"
 output: 
   flexdashboard::flex_dashboard:
-    orientation: columns
+    storyboard: true
     vertical_layout: scroll
 runtime: shiny
 ---
@@ -228,11 +228,33 @@ med_inc_race <- as_tibble(readRDS(here("data", "medinc_race.RDS")))
 
 # About
 
+The purpose of this dashboard is to visualize US Census Data through two lenses: looking at the Black population data across the states, and state/county level data such as median household income across different dimensions of race.
+
+The original data was obtained from the US decennial census data, as well as the American Community Survey, both from the Census Bureau.
+
+Here's a link to the original website of the United States Census Bureau: https://www.census.gov/en.html
+
+And a link to the American Community Survey (ACS): https://www.census.gov/programs-surveys/acs
+
+Additionally, the data downloaded for this dashboard can be found in the following GitHub directory: https://github.com/jhu-statprogramming-fall-2023/biostat777-project4-tamisha-s/tree/ba9b332a7ff6a43c934b77c4837631adf7ec1aa1/data
+
 # The Data
+
+The `tidycensus` homepage describes the basic usage of the data, as well as shows a link to the data table/understanding of the variables.
+
+Link: https://walker-data.com/tidycensus/articles/basic-usage.html
 
 # Static 1
 
-## Row 1
+## Column {.sidebar}
+
+Visualizing the median household income in $ by county in three states: California (CA), Florida (FL), and Pennsylvania (PA)
+
+## Column
+
+## Row {.tabset .tabset-fade}
+
+### Household income by county in CA (top 10)
 
 ```{r CA median household income top 10}
 ca_county %>%
@@ -249,6 +271,8 @@ ca_county %>%
   )
 ```
 
+### Household income by county in CA (bottom 5)
+
 ```{r CA median household income bottom 5}
 ca_county %>%
   mutate(NAME = gsub(" County, California", "", NAME)) %>%
@@ -263,6 +287,10 @@ ca_county %>%
     x = "ACS estimate (bars represent margin of error)"
   )
 ```
+
+## Row {.tabset .tabset-fade}
+
+### Household income by county in FL (top 10)
 
 ```{r FL median household income top 10}
 fl_county %>%
@@ -279,6 +307,8 @@ fl_county %>%
   )
 ```
 
+### Household income by county in FL (bottom 5)
+
 ```{r FL median household income bottom 5}
 fl_county %>%
   mutate(NAME = gsub(" County, Florida", "", NAME)) %>%
@@ -294,6 +324,10 @@ fl_county %>%
   )
 ```
 
+## Row {.tabset .tabset-fade}
+
+### Household income by county in PA (top 10)
+
 ```{r PA median household income top 10}
 pa_county %>%
   mutate(NAME = gsub(" County, Pennsylvania", "", NAME)) %>%
@@ -308,6 +342,8 @@ pa_county %>%
     x = "ACS estimate (bars represent margin of error)"
   )
 ```
+
+### Household income by county in PA (bottom 5)
 
 ```{r PA median household income bottom 5}
 pa_county %>%
@@ -332,7 +368,6 @@ pa_county %>%
 library(ggridges)
 ```
 
-
 ```{r}
 med_inc_race %>%
   rename(black = blackE) %>%
@@ -344,7 +379,6 @@ med_inc_race %>%
   ggplot(aes(fill = race, y = medinc, x = NAME)) +
   geom_bar(position = "dodge", stat = "identity")
 ```
-
 
 # Interactive 1
 
@@ -376,7 +410,7 @@ ca_wrangled <- ca_county %>%
   rename(state = NAME, "median household income" = median_household_incomeE)
 
 renderPlot({
-  hist(ca_wrangled$percent_black, probability = TRUE, breaks = as.numeric(input$n_breaks),
+  hist(ca_wrangled$"median household income", probability = TRUE, breaks = as.numeric(input$n_breaks),
        xlab = "Duration (minutes)", main = "Geyser Eruption Duration")
   
   dens <- density(ca_wrangled$percent_black, adjust = input$bw_adjust)
