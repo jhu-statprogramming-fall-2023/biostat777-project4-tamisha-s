@@ -193,6 +193,23 @@ if (!file.exists(here("data", "black_pop_5_yr.RDS"))) {
 }
 ```
 
+```{r loading median household income for Black, White, Asian race alone}
+if (!file.exists(here("data", "medinc_race.RDS"))) {
+  med_inc_race <- get_acs(
+    geography = "state",
+    variables = c(
+      black = "B19013B_001",
+      white = "B19013A_001",
+      asian = "B19013D_001"
+    ),
+    geometry = FALSE,
+    year = 2020,
+  )
+  
+  saveRDS(med_inc_race, file=here("data", "medinc_race.RDS"))
+}
+```
+
 ```{r read in data from RDS files, echo = FALSE}
 black_10 <- as_tibble(readRDS(here("data", "black_pop_10.RDS")))
 black_20 <- as_tibble(readRDS(here("data", "black_pop_20.RDS")))
@@ -205,6 +222,7 @@ ca_county <- as_tibble(readRDS(here("data", "ca_county.RDS")))
 fl_county <- as_tibble(readRDS(here("data", "fl_county.RDS")))
 pa_county <- as_tibble(readRDS(here("data", "pa_county.RDS")))
 black_pop_5yr <- as_tibble(readRDS(here("data", "black_pop_5_yr.RDS")))
+med_inc_race <- as_tibble(readRDS(here("data", "medinc_race.RDS")))
 ```
 
 # About
@@ -308,6 +326,24 @@ pa_county %>%
 # Static 2
 
 ## Row
+
+```{r, echo=FALSE}
+library(ggridges)
+```
+
+
+```{r}
+med_inc_race %>%
+  rename(black = blackE) %>%
+  rename(white = whiteE) %>%
+  rename(asian = asianE) %>%
+  gather(key = race, value = medinc, c(black, white, asian)) %>%
+  select(NAME, race, medinc) %>%
+  filter(NAME %in% c("California", "Florida", "Pennsylvania")) %>%
+  ggplot(aes(fill = race, y = medinc, x = NAME)) +
+  geom_bar(position = "dodge", stat = "identity")
+```
+
 
 # Interactive 1
 
