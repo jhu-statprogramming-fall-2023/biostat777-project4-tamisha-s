@@ -4,6 +4,7 @@ output:
   flexdashboard::flex_dashboard:
     storyboard: true
     vertical_layout: scroll
+    theme: journal
 runtime: shiny
 ---
 
@@ -244,13 +245,11 @@ The `tidycensus` homepage describes the basic usage of the data, as well as show
 
 Link: https://walker-data.com/tidycensus/articles/basic-usage.html
 
-# Static 1
+# Median Income by County
 
 ## Column {.sidebar}
 
 Visualizing the median household income in $ by county in three states: California (CA), Florida (FL), and Pennsylvania (PA)
-
-## Column
 
 ## Row {.tabset .tabset-fade}
 
@@ -360,13 +359,15 @@ pa_county %>%
   )
 ```
 
-# Static 2
+# Median Income by Race
+
+## Row {.sidebar}
+
+Visualizing the median household income (in \$) by race
 
 ## Row
 
-```{r, echo=FALSE}
-library(ggridges)
-```
+### Household income by race for Black, White, and Asian in CA, FL, PA
 
 ```{r}
 med_inc_race %>%
