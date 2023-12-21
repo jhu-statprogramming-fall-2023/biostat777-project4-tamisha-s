@@ -15,7 +15,8 @@ library(here)
 library(sf)
 
 library(tidycensus)
-options(tigris_use_cache = TRUE)
+options(tigris_use_cache = TRUE,
+        scipen = 100)
 
 library(tigris)
 library(tmap)
@@ -212,7 +213,97 @@ black_pop_5yr <- as_tibble(readRDS(here("data", "black_pop_5_yr.RDS")))
 
 # Static 1
 
-## Column 1
+## Row 1
+
+```{r CA median household income top 10}
+ca_county %>%
+  mutate(NAME = gsub(" County, California", "", NAME)) %>%
+  top_n(10, median_household_incomeE) %>%
+  ggplot(aes(x = median_household_incomeE, y = reorder(NAME, median_household_incomeE))) +
+  geom_errorbarh(aes(xmin = median_household_incomeE - median_household_incomeM, xmax = median_household_incomeE + median_household_incomeM)) +
+  geom_point(color = "purple", size = 3) +
+  labs(
+    title = "Household income ($) by county in California (top 10)",
+    subtitle = "2016-2020 American Community Survey",
+    y = "",
+    x = "ACS estimate (bars represent margin of error)"
+  )
+```
+
+```{r CA median household income bottom 5}
+ca_county %>%
+  mutate(NAME = gsub(" County, California", "", NAME)) %>%
+  top_n(-5, median_household_incomeE) %>%
+  ggplot(aes(x = median_household_incomeE, y = reorder(NAME, -median_household_incomeE))) +
+  geom_errorbarh(aes(xmin = median_household_incomeE - median_household_incomeM, xmax = median_household_incomeE + median_household_incomeM)) +
+  geom_point(color = "red", size = 3) +
+  labs(
+    title = "Household income ($) by county in California (bottom 5)",
+    subtitle = "2016-2020 American Community Survey",
+    y = "",
+    x = "ACS estimate (bars represent margin of error)"
+  )
+```
+
+```{r FL median household income top 10}
+fl_county %>%
+  mutate(NAME = gsub(" County, Florida", "", NAME)) %>%
+  top_n(10, median_household_incomeE) %>%
+  ggplot(aes(x = median_household_incomeE, y = reorder(NAME, median_household_incomeE))) +
+  geom_errorbarh(aes(xmin = median_household_incomeE - median_household_incomeM, xmax = median_household_incomeE + median_household_incomeM)) +
+  geom_point(color = "purple", size = 3) +
+  labs(
+    title = "Household income ($) by county in Florida (top 10)",
+    subtitle = "2016-2020 American Community Survey",
+    y = "",
+    x = "ACS estimate (bars represent margin of error)"
+  )
+```
+
+```{r FL median household income bottom 5}
+fl_county %>%
+  mutate(NAME = gsub(" County, Florida", "", NAME)) %>%
+  top_n(-5, median_household_incomeE) %>%
+  ggplot(aes(x = median_household_incomeE, y = reorder(NAME, -median_household_incomeE))) +
+  geom_errorbarh(aes(xmin = median_household_incomeE - median_household_incomeM, xmax = median_household_incomeE + median_household_incomeM)) +
+  geom_point(color = "red", size = 3) +
+  labs(
+    title = "Household income ($) by county in Florida (bottom 5)",
+    subtitle = "2016-2020 American Community Survey",
+    y = "",
+    x = "ACS estimate (bars represent margin of error)"
+  )
+```
+
+```{r PA median household income top 10}
+pa_county %>%
+  mutate(NAME = gsub(" County, Pennsylvania", "", NAME)) %>%
+  top_n(10, median_household_incomeE) %>%
+  ggplot(aes(x = median_household_incomeE, y = reorder(NAME, median_household_incomeE))) +
+  geom_errorbarh(aes(xmin = median_household_incomeE - median_household_incomeM, xmax = median_household_incomeE + median_household_incomeM)) +
+  geom_point(color = "purple", size = 3) +
+  labs(
+    title = "Household income ($) by county in Pennsylvania (top 10)",
+    subtitle = "2016-2020 American Community Survey",
+    y = "",
+    x = "ACS estimate (bars represent margin of error)"
+  )
+```
+
+```{r PA median household income bottom 5}
+pa_county %>%
+  mutate(NAME = gsub(" County, Pennsylvania", "", NAME)) %>%
+  top_n(-5, median_household_incomeE) %>%
+  ggplot(aes(x = median_household_incomeE, y = reorder(NAME, -median_household_incomeE))) +
+  geom_errorbarh(aes(xmin = median_household_incomeE - median_household_incomeM, xmax = median_household_incomeE + median_household_incomeM)) +
+  geom_point(color = "red", size = 3) +
+  labs(
+    title = "Household income ($) by county in Pennsylvania (bottom 5)",
+    subtitle = "2016-2020 American Community Survey",
+    y = "",
+    x = "ACS estimate (bars represent margin of error)"
+  )
+```
 
 # Static 2
 
@@ -221,7 +312,6 @@ black_pop_5yr <- as_tibble(readRDS(here("data", "black_pop_5_yr.RDS")))
 # Interactive 1
 
 # Interactive 2
-
 
 # Analysis
 
@@ -329,6 +419,7 @@ black_change %>%
     y = "State"
   )
 ```
+
 ### Visualizing Black population in ND
 
 ```{r}
