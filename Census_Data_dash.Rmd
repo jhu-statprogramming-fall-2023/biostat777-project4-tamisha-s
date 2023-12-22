@@ -392,11 +392,11 @@ pa_county %>%
 
 ## Row {.sidebar}
 
-Visualizing the median household income (in \$) by race
+Visualizing the median household income (in \$) by race for three states - California, Florida, and Pennsylvania
 
 ## Row
 
-### Household income by race for Black, White, and Asian in CA, FL, PA
+### Household income by race for Black, White, and Asian for all the states
 
 ```{r}
 med_inc_wrangled <- med_inc_race %>%
@@ -404,30 +404,41 @@ med_inc_wrangled <- med_inc_race %>%
   rename(white = whiteE) %>%
   rename(asian = asianE) %>%
   gather(key = race, value = medinc, c(black, white, asian)) %>%
-  select(NAME, race, medinc) %>%
-  filter(NAME %in% c("California", "Florida", "Pennsylvania"))
+  select(NAME, race, medinc)
 
 med_inc_wrangled %>%
   ggplot(aes(fill = race, y = medinc, x = NAME)) +
-  geom_bar(position = "dodge", stat = "identity")
+  geom_bar(position = "dodge", stat = "identity") +
+  labs(
+    x = "State",
+    y = "Household Income in $$"
+  ) +
+  theme(axis.text.x = element_text(angle=50, vjust=0.5, size=5))
 ```
 
-# County Level Data
+# Black Population Trend
 
 ## Column {.sidebar}
 
-Visualizing household income and percent Black data for different counties
+Visualizing Black population data over the last 5 years of the ACS data
 
 ## Column
 
+### Black population trends over 5 years grouped by state
+
 ```{r}
-ca_county %>% 
-  mutate(NAME = gsub(" County, California", "", NAME)) %>%
-  mutate(percent_black = format(round(100 * (black_popE / summary_est), 2), nsmall = 2)) %>%
-  select(NAME, median_household_incomeE, percent_black) %>%
-  rename(county = NAME, "median household income" = median_household_incomeE, "percent black" = percent_black) %>%
-  arrange(desc("percent black")) %>% 
-  DT::datatable()
+black_pop_5yr %>%
+  mutate_if(is.character, as.factor) %>%
+  group_by(year) %>%
+  ggplot(aes(x = year, y = estimate, group = NAME)) + 
+  geom_line() +
+  geom_point() +
+  facet_wrap(~ NAME) + 
+  labs(
+    subtitle = "2016-2020 American Community Survey",
+    x = "Year",
+    y = "# of people"
+  )
 ```
 
 # State Household Income
