@@ -523,6 +523,8 @@ renderPlot(total_pop_20 %>%
   ))
 ```
 
+## Row 
+
 ### Visualizing Black population as percentage of total population in 2020
 
 ```{r visualizing Black population as percentage of total population in 2020}
@@ -539,6 +541,8 @@ p <- st_sf(black_20) %>%
 
 renderPlot(p)
 ```
+
+## Row
 
 ### Visualizing Black population in DC
 
@@ -557,7 +561,22 @@ renderPlot(tm_shape(dc_black_pop_20) +
             legend.outside = TRUE))
 ```
 
-## Analyzing change in Black population since 2010
+### Visualizing Black population in ND
+
+```{r}
+nd_black_pop_20 <- st_sf(black_nd_20) %>%
+  mutate(percent = 100 * (value / summary_value))
+  
+renderPlot(tm_shape(nd_black_pop_20) +
+  tm_polygons(col = "percent",
+          style = "quantile",
+          n = 5,
+          palette = "Purples",
+          title = "2020 US Census") + 
+  tm_layout(title = "Percent Black\nby Census tract in ND",
+            frame = FALSE,
+            legend.outside = TRUE))
+```
 
 ```{r analyzing change in Black population since 2010}
 black_10_clean <- black_10 %>%
@@ -580,6 +599,8 @@ black_change <- black_joined %>%
   )
 ```
 
+## Row
+
 ### Visualizing percentage change for Black population
 
 ```{r visualizing percentage change for Black population}
@@ -594,22 +615,7 @@ renderPlot(black_change %>%
   ))
 ```
 
-### Visualizing Black population in ND
-
-```{r}
-nd_black_pop_20 <- st_sf(black_nd_20) %>%
-  mutate(percent = 100 * (value / summary_value))
-  
-renderPlot(tm_shape(nd_black_pop_20) +
-  tm_polygons(col = "percent",
-          style = "quantile",
-          n = 5,
-          palette = "Purples",
-          title = "2020 US Census") + 
-  tm_layout(title = "Percent Black\nby Census tract in ND",
-            frame = FALSE,
-            legend.outside = TRUE))
-```
+## Row
 
 ### Compare state with highest percentage of Black population (DC) with state with most Black population growth (ND)
 
