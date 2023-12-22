@@ -1,11 +1,23 @@
 ---
 title: "Census Data Dashboard"
-output: 
+output:
   flexdashboard::flex_dashboard:
     storyboard: true
     vertical_layout: scroll
-    theme: journal
 runtime: shiny
+resource_files:
+- data/medinc_race.RDS
+- data/black_pop_5_yr.RDS
+- data/pa_county_20.RDS
+- data/fl_county_20.RDS
+- data/ca_county_20.RDS
+- data/black_nd_20.RDS
+- data/black_dc_20.RDS
+- data/black_pop_20.RDS
+- data/black_pop_10.RDS
+- data/total_pop_20.RDS
+- data/total_pop_10.RDS
+- data/medinc_race_long.RDS
 ---
 
 ```{r global, include=FALSE, echo = FALSE}
@@ -128,7 +140,7 @@ if (!file.exists(here("data", "ca_county_20.RDS"))) {
   output = "wide"
 )
   
-  saveRDS(ca_county_data, file=here("data", "ca_county.RDS"))
+  saveRDS(ca_county_data, file=here("data", "ca_county_20.RDS"))
 }
 
 if (!file.exists(here("data", "fl_county_20.RDS"))) {
@@ -146,7 +158,7 @@ if (!file.exists(here("data", "fl_county_20.RDS"))) {
   output = "wide"
 )
   
-  saveRDS(fl_county_data, file=here("data", "fl_county.RDS"))
+  saveRDS(fl_county_data, file=here("data", "fl_county_20.RDS"))
 }
 
 if (!file.exists(here("data", "pa_county_20.RDS"))) {
@@ -164,7 +176,7 @@ if (!file.exists(here("data", "pa_county_20.RDS"))) {
   output = "wide"
 )
   
-  saveRDS(pa_county_data, file=here("data", "pa_county.RDS"))
+  saveRDS(pa_county_data, file=here("data", "pa_county_20.RDS"))
 }
 ```
 
@@ -206,9 +218,25 @@ if (!file.exists(here("data", "medinc_race.RDS"))) {
     ),
     geometry = FALSE,
     year = 2020,
+    output = "wide"
   )
   
   saveRDS(med_inc_race, file=here("data", "medinc_race.RDS"))
+}
+
+if (!file.exists(here("data", "medinc_race_long.RDS"))) {
+  med_inc_race <- get_acs(
+    geography = "state",
+    variables = c(
+      black = "B19013B_001",
+      white = "B19013A_001",
+      asian = "B19013D_001"
+    ),
+    geometry = FALSE,
+    year = 2020
+  )
+  
+  saveRDS(med_inc_race, file=here("data", "medinc_race_long.RDS"))
 }
 ```
 
@@ -220,11 +248,12 @@ total_pop_20 <- as_tibble(readRDS(here("data", "total_pop_20.RDS")))
 black_dc_20 <- as_tibble(readRDS(here("data", "black_dc_20.RDS")))
 black_nd_20 <- as_tibble(readRDS(here("data", "black_nd_20.RDS")))
 
-ca_county <- as_tibble(readRDS(here("data", "ca_county.RDS")))
-fl_county <- as_tibble(readRDS(here("data", "fl_county.RDS")))
-pa_county <- as_tibble(readRDS(here("data", "pa_county.RDS")))
+ca_county <- as_tibble(readRDS(here("data", "ca_county_20.RDS")))
+fl_county <- as_tibble(readRDS(here("data", "fl_county_20.RDS")))
+pa_county <- as_tibble(readRDS(here("data", "pa_county_20.RDS")))
 black_pop_5yr <- as_tibble(readRDS(here("data", "black_pop_5_yr.RDS")))
 med_inc_race <- as_tibble(readRDS(here("data", "medinc_race.RDS")))
+med_inc_race_long <- as_tibble(readRDS(here("data", "medinc_race_long.RDS")))
 ```
 
 # About
@@ -370,53 +399,69 @@ Visualizing the median household income (in \$) by race
 ### Household income by race for Black, White, and Asian in CA, FL, PA
 
 ```{r}
-med_inc_race %>%
+med_inc_wrangled <- med_inc_race %>%
   rename(black = blackE) %>%
   rename(white = whiteE) %>%
   rename(asian = asianE) %>%
   gather(key = race, value = medinc, c(black, white, asian)) %>%
   select(NAME, race, medinc) %>%
-  filter(NAME %in% c("California", "Florida", "Pennsylvania")) %>%
+  filter(NAME %in% c("California", "Florida", "Pennsylvania"))
+
+med_inc_wrangled %>%
   ggplot(aes(fill = race, y = medinc, x = NAME)) +
   geom_bar(position = "dodge", stat = "identity")
 ```
 
-# Interactive 1
+# County Level Data
+
+## Column {.sidebar}
+
+Visualizing household income and percent Black data for different counties
+
+## Column
 
 ```{r}
 ca_county %>% 
   mutate(NAME = gsub(" County, California", "", NAME)) %>%
-  mutate(percent_black = 100 * (black_popE / summary_est)) %>%
+  mutate(percent_black = format(round(100 * (black_popE / summary_est), 2), nsmall = 2)) %>%
   select(NAME, median_household_incomeE, percent_black) %>%
-  rename(state = NAME, "median household income" = median_household_incomeE) %>%
-  arrange(desc(percent_black)) %>% 
+  rename(county = NAME, "median household income" = median_household_incomeE, "percent black" = percent_black) %>%
+  arrange(desc("percent black")) %>% 
   DT::datatable()
 ```
 
-# Interactive 2
+# State Household Income
+
+## Column {data-width = 750}
+
+### Household Income by State
 
 ```{r}
-selectInput("n_breaks", label = "Number of bins:",
-            choices = c(10, 20, 35, 50), selected = 20)
-
-sliderInput("bw_adjust", label = "Bandwidth adjustment:",
-            min = 0.2, max = 2, value = 1, step = 0.2)
+med_inc_race_long %>%
+  mutate_if(is.character, as.factor) %>%
+  ggplot(aes(NAME, estimate, color=variable, group=variable)) +
+  geom_line() +
+  geom_point() +
+  theme(axis.text.x = element_text(angle=50, vjust=0.5, size=5)) +
+  labs(
+    x = "State",
+    y = "Median Household Income",
+    color = "Race"
+  )
 ```
 
-```{r}
-ca_wrangled <- ca_county %>% 
-  mutate(NAME = gsub(" County, California", "", NAME)) %>%
-  mutate(percent_black = 100 * (black_popE / summary_est)) %>%
-  select(NAME, median_household_incomeE, percent_black) %>%
-  rename(state = NAME, "median household income" = median_household_incomeE)
+## Column {data-width = 350}
 
-renderPlot({
-  hist(ca_wrangled$"median household income", probability = TRUE, breaks = as.numeric(input$n_breaks),
-       xlab = "Duration (minutes)", main = "Geyser Eruption Duration")
-  
-  dens <- density(ca_wrangled$percent_black, adjust = input$bw_adjust)
-  lines(dens, col = "blue")
-})
+### Zero In: California Data
+
+```{r}
+ca_county %>% 
+  mutate(NAME = gsub(" County, California", "", NAME)) %>%
+  mutate(percent_black = format(round(100 * (black_popE / summary_est), 2), nsmall = 2)) %>%
+  select(NAME, median_household_incomeE, percent_black) %>%
+  rename(county = NAME, "median household income" = median_household_incomeE, "percent black" = percent_black) %>%
+  arrange(desc("percent black")) %>% 
+  DT::datatable()
 ```
 
 # Analysis
