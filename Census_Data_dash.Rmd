@@ -2,7 +2,7 @@
 title: "Census Data Dashboard"
 output:
   flexdashboard::flex_dashboard:
-    storyboard: true
+    orientation: rows
     vertical_layout: scroll
 runtime: shiny
 resource_files:
@@ -276,7 +276,7 @@ Link: https://walker-data.com/tidycensus/articles/basic-usage.html
 
 # Median Income by County
 
-## Column {.sidebar}
+## Row {.sidebar}
 
 Visualizing the median household income in $ by county in three states: California (CA), Florida (FL), and Pennsylvania (PA)
 
@@ -285,7 +285,8 @@ Visualizing the median household income in $ by county in three states: Californ
 ### Household income by county in CA (top 10)
 
 ```{r CA median household income top 10}
-ca_county %>%
+renderPlot(
+  ca_county %>%
   mutate(NAME = gsub(" County, California", "", NAME)) %>%
   top_n(10, median_household_incomeE) %>%
   ggplot(aes(x = median_household_incomeE, y = reorder(NAME, median_household_incomeE))) +
@@ -297,23 +298,26 @@ ca_county %>%
     y = "",
     x = "ACS estimate (bars represent margin of error)"
   )
+)
 ```
 
 ### Household income by county in CA (bottom 5)
 
 ```{r CA median household income bottom 5}
-ca_county %>%
-  mutate(NAME = gsub(" County, California", "", NAME)) %>%
-  top_n(-5, median_household_incomeE) %>%
-  ggplot(aes(x = median_household_incomeE, y = reorder(NAME, -median_household_incomeE))) +
-  geom_errorbarh(aes(xmin = median_household_incomeE - median_household_incomeM, xmax = median_household_incomeE + median_household_incomeM)) +
-  geom_point(color = "red", size = 3) +
-  labs(
-    title = "Household income ($) by county in California (bottom 5)",
-    subtitle = "2016-2020 American Community Survey",
-    y = "",
-    x = "ACS estimate (bars represent margin of error)"
-  )
+renderPlot (
+  ca_county %>%
+    mutate(NAME = gsub(" County, California", "", NAME)) %>%
+    top_n(-5, median_household_incomeE) %>%
+    ggplot(aes(x = median_household_incomeE, y = reorder(NAME, -median_household_incomeE))) +
+    geom_errorbarh(aes(xmin = median_household_incomeE - median_household_incomeM, xmax = median_household_incomeE + median_household_incomeM)) +
+    geom_point(color = "red", size = 3) +
+    labs(
+      title = "Household income ($) by county in California (bottom 5)",
+      subtitle = "2016-2020 American Community Survey",
+      y = "",
+      x = "ACS estimate (bars represent margin of error)"
+    )
+)
 ```
 
 ## Row {.tabset .tabset-fade}
@@ -321,7 +325,8 @@ ca_county %>%
 ### Household income by county in FL (top 10)
 
 ```{r FL median household income top 10}
-fl_county %>%
+renderPlot(
+  fl_county %>%
   mutate(NAME = gsub(" County, Florida", "", NAME)) %>%
   top_n(10, median_household_incomeE) %>%
   ggplot(aes(x = median_household_incomeE, y = reorder(NAME, median_household_incomeE))) +
@@ -333,23 +338,26 @@ fl_county %>%
     y = "",
     x = "ACS estimate (bars represent margin of error)"
   )
+)
 ```
 
 ### Household income by county in FL (bottom 5)
 
 ```{r FL median household income bottom 5}
-fl_county %>%
-  mutate(NAME = gsub(" County, Florida", "", NAME)) %>%
-  top_n(-5, median_household_incomeE) %>%
-  ggplot(aes(x = median_household_incomeE, y = reorder(NAME, -median_household_incomeE))) +
-  geom_errorbarh(aes(xmin = median_household_incomeE - median_household_incomeM, xmax = median_household_incomeE + median_household_incomeM)) +
-  geom_point(color = "red", size = 3) +
-  labs(
-    title = "Household income ($) by county in Florida (bottom 5)",
-    subtitle = "2016-2020 American Community Survey",
-    y = "",
-    x = "ACS estimate (bars represent margin of error)"
-  )
+renderPlot(
+  fl_county %>%
+    mutate(NAME = gsub(" County, Florida", "", NAME)) %>%
+    top_n(-5, median_household_incomeE) %>%
+    ggplot(aes(x = median_household_incomeE, y = reorder(NAME, -median_household_incomeE))) +
+    geom_errorbarh(aes(xmin = median_household_incomeE - median_household_incomeM, xmax = median_household_incomeE + median_household_incomeM)) +
+    geom_point(color = "red", size = 3) +
+    labs(
+      title = "Household income ($) by county in Florida (bottom 5)",
+      subtitle = "2016-2020 American Community Survey",
+      y = "",
+      x = "ACS estimate (bars represent margin of error)"
+    )
+)
 ```
 
 ## Row {.tabset .tabset-fade}
@@ -357,7 +365,8 @@ fl_county %>%
 ### Household income by county in PA (top 10)
 
 ```{r PA median household income top 10}
-pa_county %>%
+renderPlot(
+  pa_county %>%
   mutate(NAME = gsub(" County, Pennsylvania", "", NAME)) %>%
   top_n(10, median_household_incomeE) %>%
   ggplot(aes(x = median_household_incomeE, y = reorder(NAME, median_household_incomeE))) +
@@ -369,12 +378,14 @@ pa_county %>%
     y = "",
     x = "ACS estimate (bars represent margin of error)"
   )
+)
 ```
 
 ### Household income by county in PA (bottom 5)
 
 ```{r PA median household income bottom 5}
-pa_county %>%
+renderPlot(
+  pa_county %>%
   mutate(NAME = gsub(" County, Pennsylvania", "", NAME)) %>%
   top_n(-5, median_household_incomeE) %>%
   ggplot(aes(x = median_household_incomeE, y = reorder(NAME, -median_household_incomeE))) +
@@ -385,7 +396,7 @@ pa_county %>%
     subtitle = "2016-2020 American Community Survey",
     y = "",
     x = "ACS estimate (bars represent margin of error)"
-  )
+  ))
 ```
 
 # Median Income by Race
@@ -406,14 +417,15 @@ med_inc_wrangled <- med_inc_race %>%
   gather(key = race, value = medinc, c(black, white, asian)) %>%
   select(NAME, race, medinc)
 
-med_inc_wrangled %>%
+renderPlot(
+  med_inc_wrangled %>%
   ggplot(aes(fill = race, y = medinc, x = NAME)) +
   geom_bar(position = "dodge", stat = "identity") +
   labs(
     x = "State",
     y = "Household Income in $$"
   ) +
-  theme(axis.text.x = element_text(angle=50, vjust=0.5, size=5))
+  theme(axis.text.x = element_text(angle=50, vjust=0.5, size=5)))
 ```
 
 # Black Population Trend
@@ -427,7 +439,7 @@ Visualizing Black population data over the last 5 years of the ACS data
 ### Black population trends over 5 years grouped by state
 
 ```{r}
-black_pop_5yr %>%
+renderPlot(black_pop_5yr %>%
   mutate_if(is.character, as.factor) %>%
   group_by(year) %>%
   ggplot(aes(x = year, y = estimate, group = NAME)) + 
@@ -438,7 +450,7 @@ black_pop_5yr %>%
     subtitle = "2016-2020 American Community Survey",
     x = "Year",
     y = "# of people"
-  )
+  ))
 ```
 
 # State Household Income
@@ -448,7 +460,7 @@ black_pop_5yr %>%
 ### Household Income by State
 
 ```{r}
-med_inc_race_long %>%
+renderPlot(med_inc_race_long %>%
   mutate_if(is.character, as.factor) %>%
   ggplot(aes(NAME, estimate, color=variable, group=variable)) +
   geom_line() +
@@ -458,7 +470,7 @@ med_inc_race_long %>%
     x = "State",
     y = "Median Household Income",
     color = "Race"
-  )
+  ))
 ```
 
 ## Column {data-width = 350}
@@ -482,7 +494,7 @@ ca_county %>%
 ### Plotting total population by state for 2010
 
 ```{r plotting total population by state for 2010}
-total_pop_10 %>% 
+renderPlot(total_pop_10 %>% 
   arrange(desc(value)) %>%
   mutate(ten_thou_pop = map_dbl(value, function(x) { return(x/10000) }) ) %>%
   ggplot(aes(x = ten_thou_pop, y = reorder(NAME, ten_thou_pop))) +
@@ -492,13 +504,13 @@ total_pop_10 %>%
     subtitle = "Arranged in descending order of population",
     x = "Population (in ten thousands)",
     y = "US State"
-  )
+  ))
 ```
 
 ### Plotting total population by state for 2020
 
 ```{r plotting total population by state for 2020}
-total_pop_20 %>% 
+renderPlot(total_pop_20 %>% 
   arrange(desc(value)) %>%
   mutate(ten_thou_pop = map_dbl(value, function(x) { return(x/10000) }) ) %>%
   ggplot(aes(x = ten_thou_pop, y = reorder(NAME, ten_thou_pop))) +
@@ -508,7 +520,7 @@ total_pop_20 %>%
     subtitle = "Arranged in descending order of population",
     x = "Population (in ten thousands)",
     y = "US State"
-  )
+  ))
 ```
 
 ### Visualizing Black population as percentage of total population in 2020
@@ -525,7 +537,7 @@ p <- st_sf(black_20) %>%
        fill = "Percentage of population that is Black") + 
   theme_void()
 
-p
+renderPlot(p)
 ```
 
 ### Visualizing Black population in DC
@@ -534,7 +546,7 @@ p
 dc_black_pop_20 <- st_sf(black_dc_20) %>%
   mutate(percent = 100 * (value / summary_value))
   
-tm_shape(dc_black_pop_20) +
+renderPlot(tm_shape(dc_black_pop_20) +
   tm_polygons(col = "percent",
           style = "quantile",
           n = 5,
@@ -542,7 +554,7 @@ tm_shape(dc_black_pop_20) +
           title = "2020 US Census") + 
   tm_layout(title = "Percent Black\nby Census tract in DC",
             frame = FALSE,
-            legend.outside = TRUE)
+            legend.outside = TRUE))
 ```
 
 ## Analyzing change in Black population since 2010
@@ -571,7 +583,7 @@ black_change <- black_joined %>%
 ### Visualizing percentage change for Black population
 
 ```{r visualizing percentage change for Black population}
-black_change %>%
+renderPlot(black_change %>%
   ggplot(aes(x = percent_change, y = reorder(NAME, percent_change))) +
   geom_point() +
   labs(
@@ -579,7 +591,7 @@ black_change %>%
     subtitle = "Arranged in descending order of percentage change",
     x = "Percent change from 2010 to 2020",
     y = "State"
-  )
+  ))
 ```
 
 ### Visualizing Black population in ND
@@ -588,7 +600,7 @@ black_change %>%
 nd_black_pop_20 <- st_sf(black_nd_20) %>%
   mutate(percent = 100 * (value / summary_value))
   
-tm_shape(nd_black_pop_20) +
+renderPlot(tm_shape(nd_black_pop_20) +
   tm_polygons(col = "percent",
           style = "quantile",
           n = 5,
@@ -596,7 +608,7 @@ tm_shape(nd_black_pop_20) +
           title = "2020 US Census") + 
   tm_layout(title = "Percent Black\nby Census tract in ND",
             frame = FALSE,
-            legend.outside = TRUE)
+            legend.outside = TRUE))
 ```
 
 ### Compare state with highest percentage of Black population (DC) with state with most Black population growth (ND)
