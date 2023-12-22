@@ -268,6 +268,11 @@ And a link to the American Community Survey (ACS): https://www.census.gov/progra
 
 Additionally, the data downloaded for this dashboard can be found in the following GitHub directory: https://github.com/jhu-statprogramming-fall-2023/biostat777-project4-tamisha-s/tree/ba9b332a7ff6a43c934b77c4837631adf7ec1aa1/data
 
+You can watch a 2 minute overview below:
+
+[![IMAGE_ALT](https://img.youtube.com/vi/ow4cw-TeSYE/0.jpg)](https://www.youtube.com/watch?v=ow4cw-TeSYE)
+
+
 # The Data
 
 The `tidycensus` homepage describes the basic usage of the data, as well as shows a link to the data table/understanding of the variables.
